@@ -1,17 +1,7 @@
-# Public deployment notes
+# Deployment notes
 
-This project is a Node.js + Express + Socket.IO web service. It must be deployed as a persistent web service/container, not as a static site.
+Deploy as a Node.js web service, not a static site. Start command: `npm start`. Health check: `/health`.
 
-## Container
-- Dockerfile included.
-- Listens on `process.env.PORT` (fallback 3000).
-- Health endpoint: `/health`.
+For dependable four-person voice/video on the public internet, configure a TURN relay. The bundled client currently has STUN only; WebRTC may fail on restrictive NATs or firewalls. TURN credentials must be obtained from a TURN provider and added to the `iceServers` array in `public/index.html`. Never commit private TURN credentials to a public GitHub repository; use a server-generated client config or a private repository/secret configuration for production.
 
-## Render
-The included `render.yaml` describes a Docker web service. Render's standard workflow still requires a connected Git repository; it does not deploy this ZIP by itself. Create a Git repository containing these files, then create a Blueprint/Web Service from it.
-
-## Important limitations before a public launch
-- Room state is held in server memory; rooms disappear on restart/redeploy and this is not horizontally scalable.
-- Players cannot reconnect after disconnect in this starter build.
-- WebRTC currently relies on public STUN only. Some networks will need a TURN relay for reliable audio/video.
-- Add abuse protection/rate limits and test four separate devices before promoting as a production game.
+The server stores room state in memory and does not support reconnecting a player after a browser refresh. Free hosting may sleep when idle.

@@ -4,4 +4,3 @@ services:
     runtime: docker
     plan: free
     healthCheckPath: /health
-    autoDeploy: false
