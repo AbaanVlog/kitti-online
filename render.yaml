@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: kitti-online
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: false
