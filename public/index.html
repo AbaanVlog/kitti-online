@@ -1,136 +1,93 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kitti Online</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kitti Online</title>
 <style>
-:root{--bg:#101b18;--felt:#164b3a;--gold:#e7c77b;--cream:#fffaf0;--muted:#b8c9c0}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#245b47,#101b18 70%);color:var(--cream);font-family:Inter,system-ui,Arial;min-height:100vh}
-header{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff20}h1{margin:0;color:var(--gold);letter-spacing:2px;font-size:25px}.sub{color:var(--muted);font-size:12px}
-main{max-width:1100px;margin:auto;padding:20px}.panel{background:#ffffff0d;border:1px solid #ffffff20;border-radius:18px;padding:18px;margin:14px 0;backdrop-filter:blur(8px)}
-button,input{font:inherit;border-radius:10px;border:1px solid #ffffff35;padding:11px 14px}input{background:#091511;color:white;min-width:0}button{background:var(--gold);color:#1b211b;border:0;font-weight:700;cursor:pointer}button.secondary{background:#ffffff18;color:white;border:1px solid #ffffff30}button:disabled{opacity:.4;cursor:not-allowed}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.hidden{display:none!important}.players{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.player{padding:12px;border-radius:12px;background:#0003;border:1px solid #ffffff18}.player b{display:block}.player small{color:var(--muted)}
-.cards{display:flex;gap:7px;flex-wrap:wrap}.card{width:62px;height:88px;border-radius:8px;background:#fffaf0;color:#17221d;display:flex;flex-direction:column;justify-content:space-between;padding:7px;font-weight:800;box-shadow:0 3px 8px #0006;cursor:pointer;user-select:none}.card.red{color:#c33240}.card.selected{outline:3px solid var(--gold);transform:translateY(-5px)}.card .big{font-size:25px;text-align:center}.card.back{background:repeating-linear-gradient(45deg,#214b72,#214b72 5px,#f5e8c6 5px,#f5e8c6 7px);color:transparent}
-.groups{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.group{min-height:120px;border:1px dashed #ffffff55;border-radius:12px;padding:9px}.group h4{margin:0 0 8px;color:var(--gold);font-size:12px}
-.videoGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.videoBox{background:#080e0c;border-radius:12px;overflow:hidden;min-height:110px;position:relative}.videoBox video{width:100%;height:150px;object-fit:cover}.videoBox span{position:absolute;bottom:7px;left:8px;background:#0009;padding:4px 7px;border-radius:6px;font-size:12px}
-.status{color:var(--gold);font-weight:700}.muted{color:var(--muted)}.score{font-size:13px;line-height:1.8}
-@media(max-width:700px){.players,.videoGrid{grid-template-columns:repeat(2,1fr)}.groups{grid-template-columns:repeat(2,1fr)}.card{width:52px;height:76px}}
-</style>
-</head>
-<body>
+:root{--bg:#101b18;--felt:#164b3a;--gold:#e7c77b;--cream:#fffaf0;--muted:#b8c9c0}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#245b47,#101b18 70%);color:var(--cream);font-family:system-ui,Arial;min-height:100vh}header{padding:16px 22px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff20}h1{margin:0;color:var(--gold);letter-spacing:2px;font-size:25px}main{max-width:1150px;margin:auto;padding:16px}.panel{background:#ffffff0d;border:1px solid #ffffff20;border-radius:18px;padding:16px;margin:14px 0}.sub,.muted,.hint{color:var(--muted);font-size:13px}.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.hidden{display:none!important}button,input{font:inherit;border-radius:10px;border:1px solid #ffffff35;padding:10px 13px}input{background:#091511;color:white}button{background:var(--gold);color:#1b211b;border:0;font-weight:750;cursor:pointer}button.secondary{background:#ffffff18;color:white;border:1px solid #ffffff30}button:disabled{opacity:.4;cursor:not-allowed}.players{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.player{padding:11px;border-radius:12px;background:#0003;border:1px solid #ffffff18;min-width:0}.player b{display:block}.player small{color:var(--muted)}.videoGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.videoBox{background:#080e0c;border-radius:12px;overflow:hidden;min-height:110px;position:relative;aspect-ratio:4/3}.videoBox video{width:100%;height:100%;object-fit:cover}.videoBox span{position:absolute;bottom:6px;left:7px;background:#000b;padding:4px 7px;border-radius:6px;font-size:12px}.botAvatar{height:100%;display:grid;place-items:center;font-size:42px;background:linear-gradient(140deg,#245b47,#091511)}.tableBoard{background:radial-gradient(ellipse,#24644c,#0b261d);border:2px solid #c6a65c;border-radius:24px;padding:14px;min-height:180px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.tableSeat{border:1px solid #ffffff35;border-radius:12px;padding:9px;min-height:110px;background:#0003}.tableSeat h4,.group h4{margin:0 0 8px;color:var(--gold);font-size:12px}.cards{display:flex;gap:6px;flex-wrap:wrap}.card{width:55px;height:78px;border-radius:8px;background:#fffaf0;color:#17221d;display:flex;flex-direction:column;justify-content:space-between;padding:6px;font-weight:800;box-shadow:0 3px 8px #0006;cursor:pointer;user-select:none;touch-action:pan-y}.card.red{color:#c33240}.card.selected{outline:3px solid var(--gold);transform:translateY(-8px)}.card .big{font-size:23px;text-align:center}.fanHand{display:flex;align-items:flex-end;justify-content:center;min-height:145px;padding:20px 8px 12px;overflow-x:auto;overflow-y:visible;touch-action:pan-x}.fanHand .card{flex:0 0 56px;margin-left:-15px;transform-origin:bottom center;transition:transform .12s;position:relative}.fanHand .card:first-child{margin-left:0}.fanHand .card:nth-child(odd){transform:rotate(-4deg)}.fanHand .card:nth-child(even){transform:rotate(4deg)}.fanHand .card.selected{transform:translateY(-19px) rotate(0)!important;z-index:5}.groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.group{min-height:125px;border:1px dashed #ffffff55;border-radius:12px;padding:9px;transition:.15s}.group.complete{border-style:solid;border-color:var(--gold);background:#e7c77b12}.group.current{border-color:var(--gold)}.group.dropTarget{border:2px dashed var(--gold);background:#e7c77b20}.group .card{width:44px;height:63px;padding:5px;cursor:pointer}.group .card .big{font-size:19px}.readyCount{font-weight:800;color:var(--gold);font-size:18px}.status{color:var(--gold);font-weight:700}.arrangePage{min-height:50vh}.sectionHead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.seatName{font-weight:800;color:var(--gold)}@media(max-width:760px){main{padding:9px}.players,.groups{grid-template-columns:repeat(2,minmax(0,1fr))}.videoGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.tableBoard{grid-template-columns:repeat(2,minmax(0,1fr))}.fanHand{justify-content:flex-start}.card{width:48px;height:70px}.fanHand .card{flex-basis:49px;margin-left:-18px}}
+</style></head><body>
 <header><div><h1>KITTI</h1><div class="sub">FOUR PLAYERS · ONE TABLE · FOUR ROUNDS</div></div><div id="roomLabel" class="sub">PRIVATE TABLE</div></header>
 <main>
-<section id="lobby" class="panel">
-<h2>Join your Kitti table</h2><p class="muted">Create a private room and share its 6-character code with three friends.</p>
-<div class="row"><input id="name" placeholder="Your name" maxlength="18"><button id="create">Create room</button></div>
-<div class="row" style="margin-top:12px"><input id="code" placeholder="Room code" maxlength="6" style="text-transform:uppercase"><button id="join" class="secondary">Join room</button></div>
-<p class="sub">For voice/video, allow camera and microphone when your browser asks. HTTPS is required after deployment.</p>
-</section>
+<section id="lobby" class="panel"><h2>Join your Kitti table</h2><p class="muted">Create a room and share its code. The host can start with 2, 3 or 4 people; empty seats become bots.</p><div class="row"><input id="name" placeholder="Your name" maxlength="18"><button id="create">Create room</button></div><div class="row" style="margin-top:10px"><input id="code" placeholder="Room code" maxlength="6" style="text-transform:uppercase"><button id="join" class="secondary">Join room</button></div><p class="sub">Allow camera and microphone when asked. For best video reliability, use a TURN-enabled network/service.</p></section>
 <section id="table" class="hidden">
-<div class="panel"><div class="row" style="justify-content:space-between"><div><div class="sub">ROOM CODE</div><h2 id="codeDisplay" style="color:var(--gold);margin:3px 0"></h2></div><div class="row"><button id="copy" class="secondary">Copy invite code</button><span class="status" id="phase"></span></div></div>
-<div class="players" id="players"></div><p id="message" class="status"></p></div>
-<div class="panel"><h3>Voice & video table</h3><div class="row"><button id="media">Enable camera & microphone</button><button id="mute" class="secondary" disabled>Mute</button><button id="camera" class="secondary" disabled>Camera off</button></div><div class="videoGrid" id="videos"></div><p class="sub">Video is peer-to-peer. A TURN server may be needed for some networks; see setup notes.</p></div>
-<div class="panel" id="discardPanel"><h3>Step 1 · Discard one card</h3><p class="muted">Choose one unwanted card. It is hidden from everyone.</p><div id="hand" class="cards"></div><div class="row" style="margin-top:12px"><button id="discard" disabled>Discard selected card</button></div></div>
-<div class="panel hidden" id="arrangePanel"><h3>Step 2 · Arrange your four groups</h3><p class="muted">Select three cards, then choose a group slot. Use all 12 cards exactly once.</p><div id="arrangeHand" class="cards"></div><div class="groups" id="groups"></div><div class="row" style="margin-top:12px"><button id="submitGroups" disabled>Lock my four groups</button><span id="arrangeCount" class="muted"></span></div></div>
-<div class="panel hidden" id="playPanel"><div class="row" style="justify-content:space-between"><h3 id="roundTitle">Round 1</h3><span class="muted">Play in anticlockwise order</span></div><div id="myGroups" class="groups"></div><p class="sub">Only the three cards you play are revealed to the table.</p></div>
-<div class="panel hidden" id="resultPanel"><h3>Round result</h3><div id="resultPlays" class="players"></div><div class="row" style="margin-top:12px"><button id="next">Continue</button></div></div>
+<div class="panel"><div class="sectionHead"><div><div class="sub">ROOM CODE</div><h2 id="codeDisplay" style="color:var(--gold);margin:3px 0"></h2></div><div class="row"><button id="copy" class="secondary">Copy invite code</button><span id="phase" class="status"></span></div></div><div id="players" class="players"></div><p id="message" class="status"></p><div id="hostControls" class="row hidden"><button id="startGame">Start game · Fill empty seats with bots</button><span class="muted">Host only · minimum 2 human players</span></div></div>
+<div class="panel" id="mediaPanel"><div class="sectionHead"><h3>Players at the table</h3><div class="row"><button id="media">Enable camera & microphone</button><button id="mute" class="secondary" disabled>Mute</button><button id="camera" class="secondary" disabled>Camera off</button></div></div><div id="videos" class="videoGrid"></div><p class="sub">Each human player has a live video tile. Bot seats show an avatar. Camera and microphone must be enabled by each human player.</p></div>
+<div class="panel hidden" id="arrangePanel"><div class="sectionHead"><h2>Make your four rounds</h2><span id="readyCount" class="readyCount">Ready 0/4</span></div><p class="hint">Tap up to 3 cards, then tap a round space; or drag cards into a round. You can move cards between rounds or tap a placed card to return it. Your 13th card is automatically set aside face down.</p><h3>Your cards</h3><div id="hand" class="fanHand"></div><div id="groups" class="groups"></div><div class="row" style="margin-top:12px"><button id="placeSelected" disabled>Put selected cards in a round</button><button id="clearSelected" class="secondary">Clear selection</button><button id="ready" disabled>Ready</button><button id="unready" class="secondary hidden">Unready · Make changes</button><span id="count" class="muted"></span></div><p id="validation" class="status"></p></div>
+<div class="panel hidden" id="playPanel"><div class="sectionHead"><h3 id="roundTitle">Round 1</h3><span class="muted">Anticlockwise play</span></div><div id="playGroups" class="groups"></div><p class="sub">Only cards played on the table are revealed to everyone.</p><div id="turnMessage" class="status"></div></div>
+<div class="panel hidden" id="resultPanel"><h3>Round result</h3><div id="result" class="players"></div><button id="next" style="margin-top:12px">Continue to next round</button></div>
 <div class="panel hidden" id="finishedPanel"><h2 id="champion"></h2><button onclick="location.reload()">Back to lobby</button></div>
-</section>
-</main>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-const socket=io(); let room=null, me=null, myHand=[], myGroups=[], selected=new Set(), groups=[[],[],[],[]], currentGroup=0, localStream=null, peers={}, remoteStreams={}, pendingSignals=[];
-const $=id=>document.getElementById(id);
-function cardHTML(c,clickable=false,chosen=false){return `<div class="card ${'♥♦'.includes(c.s)?'red':''} ${chosen?'selected':''}" data-id="${c.id}"><div>${c.r}</div><div class="big">${c.s}</div><div style="text-align:right">${c.r}</div></div>`}
-function attachCardClicks(container,fn){container.querySelectorAll(".card").forEach(el=>el.onclick=()=>fn(el.dataset.id));}
-function show(id,on=true){$(id).classList.toggle("hidden",!on)}
-function myPlayer(){return room?.players.find(p=>p.id===socket.id)}
+</section></main>
+<script src="/socket.io/socket.io.js"></script><script>
+const socket=io();const $=id=>document.getElementById(id);
+let room=null,myHand=[],myGroups=[],groups=[[],[],[],[]],selected=new Set(),localStream=null,peers={},pendingSignals=[],iceQueues={};
+function show(id,on){$(id).classList.toggle("hidden",!on)}
+function me(){return room?.players.find(p=>p.id===socket.id)}
+function cardHTML(c,selectedNow=false){return `<div class="card ${"♥♦".includes(c.s)?"red":""} ${selectedNow?"selected":""}" data-id="${c.id}" draggable="true"><div>${c.r}</div><div class="big">${c.s}</div><div style="text-align:right">${c.r}</div></div>`}
 function render(){
- if(!room)return;
- $("lobby").classList.add("hidden"); show("table");
- $("roomLabel").textContent="ROOM "+room.code; $("codeDisplay").textContent=room.code;
- $("phase").textContent=room.phase.toUpperCase(); $("message").textContent=room.message;
- $("players").innerHTML=room.players.map((p,i)=>`<div class="player"><b>${p.name}${p.id===socket.id?" (YOU)":""}</b><small>${p.connected===false?"Disconnected":p.ready?"Ready":"At table"} · ${p.roundWins} round wins</small></div>`).join("");
- show("discardPanel",room.phase==="discard"&&!myPlayer()?.discarded);
- show("arrangePanel",room.phase==="arrange"&&!myPlayer()?.ready);
- show("playPanel",room.phase==="playing");
- show("resultPanel",room.phase==="roundResult");
- show("finishedPanel",room.phase==="finished");
- if(room.phase==="finished")$("champion").textContent=room.message;
- if(room.phase==="playing"){ $("roundTitle").textContent="Round "+room.round; renderPlay();}
+ if(!room)return;show("lobby",false);show("table",true);$("roomLabel").textContent="ROOM "+room.code;$("codeDisplay").textContent=room.code;$("phase").textContent=room.phase.toUpperCase();$("message").textContent=room.message;
+ $("players").innerHTML=room.players.map(p=>`<div class="player"><b>${p.name}${p.id===socket.id?" (YOU)":""}${p.id===room.hostId?" · HOST":""}</b><small>${p.bot?"Bot player":p.connected===false?"Disconnected":p.ready?"Ready":"At table"} · ${p.roundWins} wins</small>${room.hostId===socket.id&&!p.bot&&p.id!==socket.id&&room.phase==="lobby"?`<button class="secondary" style="margin-top:6px;padding:5px 8px" onclick="kick('${p.id}')">Kick</button>`:""}</div>`).join("");
+ show("hostControls",room.phase==="lobby"&&room.hostId===socket.id);$("startGame").disabled=room.players.filter(p=>!p.bot).length<2;
+ show("mediaPanel",room.phase!=="lobby");show("arrangePanel",room.phase==="arrange");show("playPanel",room.phase==="playing");show("resultPanel",room.phase==="roundResult");show("finishedPanel",room.phase==="finished");
+ if(room.phase==="arrange"){renderArrange();}
+ if(room.phase==="playing"){renderPlay();}
  if(room.phase==="roundResult")renderResult();
+ if(room.phase==="finished")$("champion").textContent=room.message;
  renderVideos();
 }
-function renderHand(){
- $("hand").innerHTML=myHand.map(c=>cardHTML(c,true,selected.has(c.id))).join("");
- attachCardClicks($("hand"),id=>{selected=selected.has(id)?new Set([...selected].filter(x=>x!==id)):new Set([...selected,id]);renderHand();$("discard").disabled=selected.size!==1;});
- $("discard").disabled=selected.size!==1;
-}
 function renderArrange(){
- $("arrangeHand").innerHTML=myHand.map(c=>cardHTML(c,true,selected.has(c.id))).join("");
- attachCardClicks($("arrangeHand"),id=>{if(selected.has(id))selected.delete(id);else if(selected.size<3)selected.add(id);renderArrange();});
- $("groups").innerHTML=groups.map((g,i)=>`<div class="group"><h4>GROUP ${i+1} ${i===currentGroup?"· SELECTED":""}</h4><div class="cards">${g.map(c=>cardHTML(c)).join("")}</div><button class="secondary" style="margin-top:8px;padding:6px 9px" onclick="putGroup(${i})">Put selected here</button></div>`).join("");
- $("arrangeCount").textContent=groups.reduce((n,g)=>n+g.length,0)+"/12 cards placed";
- $("submitGroups").disabled=groups.some(g=>g.length!==3);
+ const locked=!!me()?.ready;
+ $("readyCount").textContent=`Ready ${room.readyCount}/4`;
+ $("hand").innerHTML=myHand.map(c=>cardHTML(c,selected.has(c.id))).join("");
+ $("hand").querySelectorAll(".card").forEach(el=>{
+  const id=el.dataset.id;el.onclick=()=>{if(locked)return;if(selected.has(id))selected.delete(id);else if(selected.size<3)selected.add(id);renderArrange();};
+  el.addEventListener("dragstart",e=>e.dataTransfer.setData("text/plain",id));
+ });
+ $("groups").innerHTML=groups.map((g,i)=>`<div class="group ${g.length===3?"complete":""}" data-round="${i}"><h4>ROUND ${i+1}</h4><div class="cards">${g.map(c=>cardHTML(c)).join("")}</div><small class="muted">${g.length}/3 cards · ${g.length===3?"Complete":"Add 3 cards"}</small></div>`).join("");
+ $("groups").querySelectorAll(".group").forEach(el=>{
+  const i=Number(el.dataset.round);el.ondragover=e=>{if(!locked)e.preventDefault();};el.ondrop=e=>{e.preventDefault();if(!locked)moveToRound(e.dataTransfer.getData("text/plain"),i);};
+  el.querySelectorAll(".card").forEach(c=>c.onclick=()=>{if(!locked)removeFromRound(c.dataset.id,i);});
+  el.onclick=e=>{if(!e.target.closest(".card")){if(!locked&&selected.size===3)placeSelected(i);}};
+ });
+ $("placeSelected").disabled=locked||selected.size!==3||groups.every(g=>g.length===3);
+ $("ready").disabled=locked||groups.some(g=>g.length!==3);
+ show("unready",locked);$("count").textContent=`${groups.reduce((n,g)=>n+g.length,0)}/12 arranged · ${selected.size} selected`;
+ $("validation").textContent=locked?"Your arrangement is locked.": "Select 3 cards and tap a round, or drag them into a round.";
+ socket.emit("game:activity",{count:myHand.length});
 }
-window.putGroup=i=>{if(selected.size!==3||groups[i].length!==0)return;const ids=[...selected];const chosen=ids.map(id=>myHand.find(c=>c.id===id));groups[i]=chosen;myHand=myHand.filter(c=>!selected.has(c.id));selected.clear();currentGroup=i;renderArrange();};
+function moveToRound(id,i){
+ if(!id||groups[i].length>=3)return;
+ let card=myHand.find(c=>c.id===id);
+ if(card){myHand=myHand.filter(c=>c.id!==id);groups[i].push(card);selected.delete(id);}
+ else for(let j=0;j<4;j++){const k=groups[j].findIndex(c=>c.id===id);if(k>=0){card=groups[j].splice(k,1)[0];groups[i].push(card);break;}}
+ renderArrange();
+}
+function removeFromRound(id,i){const k=groups[i].findIndex(c=>c.id===id);if(k>=0){myHand.push(groups[i].splice(k,1)[0]);renderArrange();}}
+function placeSelected(i){if(selected.size!==3||groups[i].length!==0)return;const chosen=[...selected].map(id=>myHand.find(c=>c.id===id));if(chosen.some(x=>!x))return;groups[i]=chosen;myHand=myHand.filter(c=>!selected.has(c.id));selected.clear();renderArrange();}
 function renderPlay(){
- const p=myPlayer(); if(!p)return;
- $("myGroups").innerHTML=(myGroups||[]).map((g,i)=>`<div class="group"><h4>GROUP ${i+1}</h4><div class="cards">${g.map(c=>cardHTML(c)).join("")}</div><button style="margin-top:8px" ${room.plays.some(x=>x.playerId===socket.id)?"disabled":""} onclick="playGroup(${i})">Play this group</button></div>`).join("");
+ $("roundTitle").textContent=`Round ${room.round}`;const next=room.players[(room.starter+room.plays.length)%4];$("turnMessage").textContent=next?`Turn: ${next.name}`:"";
+ $("playGroups").innerHTML=room.players.map(p=>{const played=room.plays.find(x=>x.playerId===p.id);const my=p.id===socket.id;return `<div class="group"><h4>${p.name}${p.id===room.winner?" · WINNER":""}</h4>${played?`<div class="cards">${played.cards.map(c=>cardHTML(c)).join("")}</div><small>${played.handName}</small>`:my?`<div class="cards">${(myGroups||[]).map((g,i)=>`<button class="secondary" onclick="play(${i})">Play Round ${i+1}</button>`).join("")}</div>`:`<small class="muted">${p.bot?"Bot is thinking…":"Cards hidden until played"}</small>`}</div>`;}).join("");
 }
-window.playGroup=i=>socket.emit("game:play",{groupIndex:i});
-function renderResult(){
- $("resultPlays").innerHTML=room.plays.map(x=>`<div class="player"><b>${room.players.find(p=>p.id===x.playerId)?.name||"Player"}</b><small>${x.handName}</small><div class="cards" style="margin-top:8px">${x.cards.map(c=>cardHTML(c)).join("")}</div>${x.playerId===room.winner?'<b style="color:var(--gold)">ROUND WINNER</b>':""}</div>`).join("");
-}
-$("create").onclick=()=>socket.emit("room:create",{name:$("name").value||"Player"});
-$("join").onclick=()=>socket.emit("room:join",{name:$("name").value||"Player",code:$("code").value.toUpperCase()});
-$("discard").onclick=()=>{socket.emit("game:discard",{cardId:[...selected][0]});selected.clear();};
-$("submitGroups").onclick=()=>socket.emit("game:arrange",{groups:groups.map(g=>g.map(c=>c.id))});
-$("next").onclick=()=>socket.emit("game:next");
-$("copy").onclick=()=>navigator.clipboard.writeText(room.code);
+function renderResult(){$("result").innerHTML=room.plays.map(x=>`<div class="player"><b>${room.players.find(p=>p.id===x.playerId)?.name||"Player"}</b><small>${x.handName}</small><div class="cards">${x.cards.map(c=>cardHTML(c)).join("")}</div>${x.playerId===room.winner?"<b class='status'>ROUND WINNER</b>":""}</div>`).join("");$("next").classList.toggle("hidden",room.hostId!==socket.id);}
+window.play=i=>socket.emit("game:play",{groupIndex:i});window.kick=id=>socket.emit("room:kick",{playerId:id});
+$("create").onclick=()=>socket.emit("room:create",{name:$("name").value||"Player"});$("join").onclick=()=>socket.emit("room:join",{name:$("name").value||"Player",code:$("code").value.toUpperCase()});
+$("startGame").onclick=()=>socket.emit("game:start");$("copy").onclick=()=>navigator.clipboard.writeText(room.code);
+$("placeSelected").onclick=()=>{const empty=groups.findIndex(g=>g.length===0);if(empty>=0)placeSelected(empty);};
+$("clearSelected").onclick=()=>{selected.clear();renderArrange();};
+$("ready").onclick=()=>{const ids=groups.flat().map(c=>c.id);if(groups.some(g=>g.length!==3)||ids.length!==12||new Set(ids).size!==12){$("validation").textContent="Each of the four rounds needs 3 different cards.";return;}socket.emit("game:arrange",{groups:groups.map(g=>g.map(c=>c.id))});};
+$("unready").onclick=()=>socket.emit("game:unready");$("next").onclick=()=>socket.emit("game:next");
 socket.on("room:update",r=>{room=r;render();});
-socket.on("private:hand",d=>{myHand=d.hand||[];myGroups=d.groups||[];if(room?.phase==="discard")renderHand();if(room?.phase==="arrange")renderArrange();if(room?.phase==="playing")renderPlay();});
+socket.on("private:hand",d=>{if(room?.phase==="arrange"&&!me()?.ready){myHand=d.hand||[];myGroups=d.groups||[];if(myGroups.length===4&&myGroups.some(g=>g.length)){groups=myGroups.map(g=>g.map(c=>({...c})));const used=new Set(groups.flat().map(c=>c.id));myHand=myHand.filter(c=>!used.has(c.id));}else if(!groups.some(g=>g.length)){groups=[[],[],[],[]];}renderArrange();}if(room?.phase==="playing"){myGroups=d.groups||myGroups;renderPlay();}});
 socket.on("notice",m=>alert(m));
-
-async function startMedia(){
- try{
-  localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-  $("media").disabled=true;$("mute").disabled=false;$("camera").disabled=false;
-  addVideo(socket.id,localStream,"You");
-  room.players.filter(p=>p.id!==socket.id && socket.id < p.id).forEach(p=>makePeer(p.id,true));
-  const queued=pendingSignals.splice(0); for(const sig of queued) await handleSignal(sig);
- }catch(e){alert("Camera/microphone permission failed: "+e.message);}
+/* Four-way WebRTC mesh. Signaling received before camera permission is queued;
+   ICE candidates are queued until the matching remote description exists. */
+async function enableMedia(){
+ try{localStream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480}},audio:{echoCancellation:true,noiseSuppression:true}});$("media").disabled=true;$("mute").disabled=false;$("camera").disabled=false;addVideo(socket.id,localStream,"You",true);for(const p of room.players)if(!p.bot&&p.id!==socket.id&&socket.id.localeCompare(p.id)<0)makePeer(p.id,true);const q=pendingSignals.splice(0);for(const x of q)await handleSignal(x);}
+ catch(e){alert("Camera/microphone permission failed: "+e.message);}
 }
-function addVideo(id,stream,label){
- let box=document.getElementById("v-"+id);
- if(!box){box=document.createElement("div");box.className="videoBox";box.id="v-"+id;box.innerHTML=`<video autoplay playsinline ${id===socket.id?"muted":""}></video><span></span>`;$("videos").appendChild(box);}
- box.querySelector("video").srcObject=stream;box.querySelector("span").textContent=label;
+function addVideo(id,stream,label,muted=false){let box=document.getElementById("v-"+id);if(!box){box=document.createElement("div");box.className="videoBox";box.id="v-"+id;box.innerHTML=`<video autoplay playsinline ${muted?"muted":""}></video><span></span>`;$("videos").appendChild(box);}const v=box.querySelector("video");v.srcObject=stream;v.muted=muted;v.play().catch(()=>{});box.querySelector("span").textContent=label;}
+function renderVideos(){if(!room)return;const videos=$("videos");for(const p of room.players){let box=document.getElementById("v-"+p.id);if(p.bot){if(!box){box=document.createElement("div");box.className="videoBox";box.id="v-"+p.id;box.innerHTML=`<div class="botAvatar">🤖</div><span>${p.name}</span>`;videos.appendChild(box);}}else{if(!box&&p.id!==socket.id){box=document.createElement("div");box.className="videoBox";box.id="v-"+p.id;box.innerHTML=`<div class="botAvatar">📷</div><span>${p.name} · connecting…</span>`;videos.appendChild(box);}if(p.id!==socket.id&&localStream&&socket.id.localeCompare(p.id)<0&&!peers[p.id])makePeer(p.id,true);}}}
+function makePeer(id,initiator){if(peers[id]||!localStream)return;const pc=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]});peers[id]=pc;iceQueues[id]=[];localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));pc.ontrack=e=>{const stream=e.streams[0]||new MediaStream([e.track]);const p=room?.players.find(x=>x.id===id);addVideo(id,stream,p?.name||"Player");};pc.onicecandidate=e=>{if(e.candidate)socket.emit("rtc:signal",{to:id,data:{candidate:e.candidate}});};pc.onconnectionstatechange=()=>{if(["failed","closed"].includes(pc.connectionState))console.warn("Peer connection",id,pc.connectionState);};
+ if(initiator)pc.createOffer().then(o=>pc.setLocalDescription(o)).then(()=>socket.emit("rtc:signal",{to:id,data:{description:pc.localDescription}})).catch(console.error);
 }
-function makePeer(id,initiator){
- if(peers[id]||!localStream)return;
- const pc=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});peers[id]=pc;
- localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
- pc.ontrack=e=>{remoteStreams[id]=e.streams[0];const p=room?.players.find(x=>x.id===id);addVideo(id,e.streams[0],p?.name||"Player");};
- pc.onicecandidate=e=>{if(e.candidate)socket.emit("rtc:signal",{to:id,data:{candidate:e.candidate}});};
- if(initiator){pc.createOffer().then(o=>pc.setLocalDescription(o)).then(()=>socket.emit("rtc:signal",{to:id,data:{description:pc.localDescription}}));}
-}
-socket.on("rtc:signal",async({from,data})=>{
- if(!localStream)return;
- if(!peers[from])makePeer(from,false);
- const pc=peers[from];
- try{
-  if(data.description){
-   await pc.setRemoteDescription(data.description);
-   if(data.description.type==="offer"){const a=await pc.createAnswer();await pc.setLocalDescription(a);socket.emit("rtc:signal",{to:from,data:{description:pc.localDescription}});}
-  } else if(data.candidate) await pc.addIceCandidate(data.candidate);
- }catch(e){console.warn(e);}
-});
-function renderVideos(){
- if(!room)return;
- room.players.forEach(p=>{if(p.id!==socket.id&&socket.id < p.id&&localStream&&!peers[p.id])makePeer(p.id,true);});
-}
-$("media").onclick=startMedia;
-$("mute").onclick=()=>{if(localStream){const t=localStream.getAudioTracks()[0];t.enabled=!t.enabled;$("mute").textContent=t.enabled?"Mute":"Unmute";}};
-$("camera").onclick=()=>{if(localStream){const t=localStream.getVideoTracks()[0];t.enabled=!t.enabled;$("camera").textContent=t.enabled?"Camera off":"Camera on";}};
-</script>
-</body></html>
+async function handleSignal({from,data}){if(!localStream){pendingSignals.push({from,data});return;}if(!peers[from])makePeer(from,false);const pc=peers[from];if(!pc)return;try{if(data.description){await pc.setRemoteDescription(data.description);if(data.description.type==="offer"){const a=await pc.createAnswer();await pc.setLocalDescription(a);socket.emit("rtc:signal",{to:from,data:{description:pc.localDescription}});}for(const c of iceQueues[from].splice(0))await pc.addIceCandidate(c);}else if(data.candidate){if(pc.remoteDescription)await pc.addIceCandidate(data.candidate);else iceQueues[from].push(data.candidate);}}catch(e){console.warn("WebRTC signaling error",e);}}
+socket.on("rtc:signal",handleSignal);$("media").onclick=enableMedia;
+$("mute").onclick=()=>{const t=localStream?.getAudioTracks()[0];if(t){t.enabled=!t.enabled;$("mute").textContent=t.enabled?"Mute":"Unmute";}};
+$("camera").onclick=()=>{const t=localStream?.getVideoTracks()[0];if(t){t.enabled=!t.enabled;$("camera").textContent=t.enabled?"Camera off":"Camera on";}};
+</script></body></html>
